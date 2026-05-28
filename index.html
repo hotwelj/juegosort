@@ -967,6 +967,12 @@
 
   document.getElementById('gameCount').textContent = document.querySelectorAll('.game-card').length;
 
+  setInterval(() => {
+    if (sessionStorage.getItem("auth_piratas") !== "ok") {
+      if (!document.getElementById("pwd-overlay")) location.reload();
+    }
+  }, 500);
+
   window.addEventListener('scroll', () => {
     document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 300);
   });
