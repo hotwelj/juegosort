@@ -239,7 +239,7 @@
       from { opacity:0; transform:translateY(12px); }
       to   { opacity:1; transform:translateY(0); }
     }
-    .game-card { animation: cardFadeIn 0.4s ease both; }
+    .game-card.fadein { animation: cardFadeIn 0.4s ease both; }
 
     /* ── FILTRO SUAVE ── */
     .game-card.hiding {
@@ -803,7 +803,7 @@
     <div><strong>Hecho con pasión</strong><p>Para nuestra comunidad pirata.</p></div>
   </div>
   <div class="footer-version">
-    <span class="version-badge"><span class="version-dot"></span> v1.103</span>
+    <span class="version-badge"><span class="version-dot"></span> v1.104</span>
     <span class="update-date">🗓 Última actualización: 5 de junio de 2026</span>
   </div>
 </div>
@@ -1003,6 +1003,7 @@
       fb.classList.remove("fav-pop");
       void fb.offsetWidth;
       fb.classList.add("fav-pop");
+      fb.addEventListener('animationend', () => fb.classList.remove('fav-pop'), { once: true });
     });
     saveFavs();
     if ($("modal-fav")) updateModalFav(name);
@@ -1023,6 +1024,7 @@
     updateModalFav(name);
     const mf = $("modal-fav");
     mf.classList.remove("fav-pop"); void mf.offsetWidth; mf.classList.add("fav-pop");
+    mf.addEventListener('animationend', () => mf.classList.remove('fav-pop'), { once: true });
     document.querySelectorAll(".game-card").forEach(c => {
       if (c.dataset.name === name) {
         c.querySelectorAll(".fav-btn, .fav-btn-inline").forEach(fb => {
@@ -1086,10 +1088,13 @@
                         (activeGenre === "favoritos" ? favs.includes(c.dataset.name) : (c.dataset.genres || "").includes(activeGenre));
       if (nameMatch && genreMatch) {
         c.style.display = "";
-        c.style.animationDelay = "0ms";
+        c.style.opacity = "1";
+        c.style.transform = "";
         visible++;
       } else {
-        c.style.display = "none";
+        c.style.opacity = "0";
+        c.style.transform = "scale(0.95)";
+        setTimeout(() => { if (c.style.opacity === "0") c.style.display = "none"; }, 180);
       }
     });
     $("noResults").style.display = visible === 0 ? "block" : "none";
@@ -1141,14 +1146,16 @@
   // Staggered fade-in
   document.querySelectorAll(".game-card").forEach((c, i) => {
     c.style.animationDelay = `${i * 40}ms`;
+    c.classList.add("fadein");
+    setTimeout(() => { c.style.animationDelay = "0ms"; }, (i * 40) + 400);
   });
   const totalGames = document.querySelectorAll(".game-card").length;
   let count = 0;
   const counterInterval = setInterval(() => {
-    count += Math.ceil(totalGames / 20);
+    count += 1;
     if (count >= totalGames) { count = totalGames; clearInterval(counterInterval); }
     $("gameCount").textContent = count;
-  }, 40);
+  }, 80);
   initFavBtns();
   updateCounts();
 
