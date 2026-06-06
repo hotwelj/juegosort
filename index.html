@@ -713,7 +713,7 @@
         </div>
       </div>
 
-      <div class="game-card" onclick="abrirModal(this)" data-name='CloverPit' data-desc='Atrapado en una celda con una tragaperras infernal. Girá para pagar la deuda, o caé literalmente por una trampilla.' data-img='https://cdn.akamai.steamstatic.com/steam/apps/3314790/header.jpg' data-dl='cloverpit'>
+      <div class="game-card" onclick="abrirModal(this)" data-genres='roguelike terror estrategia' data-name='CloverPit' data-desc='Atrapado en una celda con una tragaperras infernal. Girá para pagar la deuda, o caé literalmente por una trampilla.' data-img='https://cdn.akamai.steamstatic.com/steam/apps/3314790/header.jpg' data-dl='cloverpit'>
         <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)" title="Favorito">🤍</button>
         <img class="game-cover" src="https://cdn.akamai.steamstatic.com/steam/apps/3314790/header.jpg" alt="CloverPit" loading="lazy" onerror="this.style.display='none'">
         <div class="game-card-body">
@@ -766,7 +766,7 @@
     <div><strong>Hecho con pasión</strong><p>Para nuestra comunidad pirata.</p></div>
   </div>
   <div class="footer-version">
-    <span class="version-badge"><span class="version-dot"></span> v1.099</span>
+    <span class="version-badge"><span class="version-dot"></span> v1.100</span>
     <span class="update-date">🗓 Última actualización: 5 de junio de 2026</span>
   </div>
 </div>
@@ -929,6 +929,8 @@
     sessionStorage.removeItem("auth_piratas");
     sessionStorage.removeItem("auth_token");
     sessionStorage.removeItem("auth_nombre");
+    favs = [];
+    initFavBtns(); updateCounts();
     const ov = $("pwd-overlay"), box = $("pwd-box"), btn = $("pwd-btn");
     ov.classList.remove("saliendo"); box.classList.remove("correcto");
     $("pwd-lock").textContent = "🔒";
