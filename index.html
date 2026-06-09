@@ -246,6 +246,23 @@
     @keyframes cardHide {
       to { opacity:0; transform:scale(0.95); }
     }
+
+    /* ── TOAST NOTIFICACIÓN ── */
+    #toast {
+      position:fixed; top:-60px; left:50%; transform:translateX(-50%);
+      background:#0b3a75; color:white; padding:10px 20px; border-radius:20px;
+      font-size:14px; font-weight:bold; z-index:99998;
+      box-shadow:0 4px 16px rgba(0,0,0,0.3);
+      transition:top 0.35s cubic-bezier(.22,1,.36,1);
+      white-space:nowrap; pointer-events:none;
+    }
+    #toast.visible { top:20px; }
+    #toast.ok   { background:#16a34a; }
+    #toast.error { background:#dc2626; }
+
+    /* ── FAV LOADING STATE ── */
+    .fav-btn-inline.loading { opacity:0.5; cursor:wait; pointer-events:none; }
+    #favs-loading { display:none; text-align:center; font-size:13px; color:var(--text-muted); padding:8px 0; }
   </style>
 </head>
 <body>
@@ -381,6 +398,7 @@
       <button class="genre-btn" onclick="filterGenre('sandbox', this)">Sandbox</button>
       <button class="genre-btn" onclick="filterGenre('simulacion', this)">Simulación</button>
     </div>
+    <p id="favs-loading">⏳ Cargando favoritos...</p>
     <p class="no-results" id="noResults">No se encontró ningún juego.</p>
 <div class="games-grid">
 
@@ -800,7 +818,7 @@
     <div><strong>Hecho con pasión</strong><p>Para nuestra comunidad pirata.</p></div>
   </div>
   <div class="footer-version">
-    <span class="version-badge"><span class="version-dot"></span> v1.110</span>
+    <span class="version-badge"><span class="version-dot"></span> v1.111</span>
   </div>
 </div>
 
@@ -911,6 +929,7 @@
       if (nombre) $("session-label").innerHTML = `Sesión iniciada como <strong style="color:#0b3a75;">${nombre}</strong>`;
       favs = JSON.parse(localStorage.getItem(getFavsKey()) || "[]");
       initFavBtns(); updateCounts();
+      cargarFavsServidor();
       setTimeout(() => {
         $("pwd-overlay").classList.add("saliendo");
         setTimeout(() => $("pwd-overlay").style.display = "none", 600);
@@ -980,13 +999,62 @@
   }, 500);
 
   // ── JUEGOS ──
+  // ── TOAST ──
+  let toastTimer = null;
+  function showToast(msg, type = "ok", duration = 2200) {
+    const t = $("toast");
+    if (toastTimer) clearTimeout(toastTimer);
+    t.textContent = msg;
+    t.className = `visible ${type}`;
+    toastTimer = setTimeout(() => { t.classList.remove("visible"); }, duration);
+  }
+
   function getFavsKey() { return "favs_" + (sessionStorage.getItem("auth_nombre") || "guest"); }
   let favs = JSON.parse(localStorage.getItem(getFavsKey()) || "[]");
+
+  async function cargarFavsServidor() {
+    const token = sessionStorage.getItem("auth_token");
+    const usuario = sessionStorage.getItem("auth_nombre");
+    if (!token || !usuario) return;
+    $("favs-loading").style.display = "block";
+    try {
+      const res = await fetch("/.netlify/functions/getfavs", {
+        method: "POST",
+        body: JSON.stringify({ token, usuario })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        favs = data.favs;
+        localStorage.setItem(getFavsKey(), JSON.stringify(favs));
+        initFavBtns();
+        updateCounts();
+      }
+    } catch {}
+    $("favs-loading").style.display = "none";
+  }
+
+  async function guardarFavsServidor() {
+    const token = sessionStorage.getItem("auth_token");
+    const usuario = sessionStorage.getItem("auth_nombre");
+    if (!token || !usuario) return;
+    try {
+      await fetch("/.netlify/functions/savefavs", {
+        method: "POST",
+        body: JSON.stringify({ token, usuario, favs })
+      });
+    } catch {}
+  }
   let activeGenre = "todos";
   let activeView = "grid";
   let modalDlKey = "";
 
-  function saveFavs() { localStorage.setItem(getFavsKey(), JSON.stringify(favs)); }
+  function saveFavs(nombre, added) {
+    localStorage.setItem(getFavsKey(), JSON.stringify(favs));
+    guardarFavsServidor();
+    if (nombre !== undefined) {
+      showToast(added ? `❤️ ${nombre} agregado a favoritos` : `🤍 ${nombre} quitado de favoritos`);
+    }
+  }
 
   function toggleFav(btn) {
     const card = btn.closest(".game-card");
@@ -1001,7 +1069,7 @@
       fb.classList.add("fav-pop");
       fb.addEventListener('animationend', () => fb.classList.remove('fav-pop'), { once: true });
     });
-    saveFavs();
+    saveFavs(name, favs.includes(name));
     if ($("modal-fav")) updateModalFav(name);
     updateCounts();
     if (activeGenre === "favoritos") filterGames();
@@ -1016,7 +1084,7 @@
     } else {
       favs.push(name);
     }
-    saveFavs();
+    saveFavs(name, favs.includes(name));
     updateModalFav(name);
     const mf = $("modal-fav");
     mf.classList.remove("fav-pop"); void mf.offsetWidth; mf.classList.add("fav-pop");
@@ -1195,5 +1263,7 @@
   });
 </script>
 
+
+<div id="toast"></div>
 </body>
 </html>
