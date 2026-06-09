@@ -206,7 +206,22 @@
     [data-theme="light"] #modal-title { color:#0b3a75; }
     #modal-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; justify-content:center; }
     #modal-tags .game-tag { font-size:12px; padding:5px 14px; border-radius:20px; background:var(--btn-dl-bg); color:var(--btn-dl-color); font-weight:bold; border:1px solid var(--border-input); }
-    #modal-desc { font-size:14px; color:var(--text-muted); line-height:1.7; margin:0 0 20px; }
+    #modal-desc { font-size:14px; color:var(--text-muted); line-height:1.7; margin:0 0 8px; }
+    #modal-desc.truncated { display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+    #modal-desc-wrap { position:relative; margin-bottom:4px; }
+    #modal-desc.truncated { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    #modal-ver-mas-inline { display:none; color:#3b82f6; font-size:13px; font-weight:bold; cursor:pointer; background:none; border:none; padding:0 0 16px; font-family:Arial,sans-serif; }
+    #modal-ver-mas-inline:hover { color:#1d4ed8; }
+
+    /* Sweep animation container */
+    .sweep-container { position:relative; overflow:hidden; height:1.4em; margin-bottom:12px; display:none; }
+    .sweep-arrow { position:absolute; top:0; font-size:13px; color:#3b82f6; font-weight:bold; white-space:nowrap; }
+    @keyframes sweepRight { from{left:0;} to{left:100%;} }
+    @keyframes sweepLeft  { from{right:0;} to{right:100%;} }
+    .sweep-text { position:absolute; top:0; left:0; font-size:13px; color:#3b82f6; font-weight:bold; white-space:nowrap; clip-path:inset(0 100% 0 0); transition:clip-path 0.35s linear; }
+    .sweep-text.revealed { clip-path:inset(0 0% 0 0); }
+    .sweep-text.hiding { clip-path:inset(0 100% 0 0); }
+    #modal-ver-mas:hover { color:#1d4ed8; text-decoration:underline; }
     #modal-actions { display:flex; gap:10px; }
     #modal-download { flex:1; padding:12px; background:#0b3a75; color:white; border:none; border-radius:10px; font-size:14px; font-weight:bold; cursor:pointer; transition:background 0.2s; }
     #modal-download:hover { background:#1d4ed8; }
@@ -817,6 +832,14 @@
       <div id="modal-title"></div>
       <div id="modal-tags"></div>
       <p id="modal-desc"></p>
+      <div id="modal-desc-wrap">
+        <p id="modal-desc"></p>
+        <button id="modal-ver-mas-inline" onclick="toggleVerMas()"></button>
+      </div>
+      <div class="sweep-container" id="sweep-container">
+        <span class="sweep-text" id="sweep-text"></span>
+        <span class="sweep-arrow" id="sweep-arrow"></span>
+      </div>
       <div id="modal-actions">
         <button id="modal-download" onclick="descargarDesdeModal()">⬇ Descargar</button>
         <button id="modal-fav" onclick="toggleFavModal()">🤍</button>
@@ -840,7 +863,7 @@
     <div><strong>Hecho con pasión</strong><p>Para nuestra comunidad pirata.</p></div>
   </div>
   <div class="footer-version">
-    <span class="version-badge"><span class="version-dot"></span> v1.120</span>
+    <span class="version-badge"><span class="version-dot"></span> v1.123</span>
   </div>
 </div>
 
@@ -1188,8 +1211,75 @@
     $("modal-tags").innerHTML = tagsEl ? tagsEl.innerHTML : "";
     
     updateModalFav(name);
+    // Check if description needs truncation
+    const descEl = $("modal-desc");
+    const verMasBtn = $("modal-ver-mas-inline");
+    descEl.classList.add("truncated");
+    verMasBtn.textContent = "Ver más";
+    setTimeout(() => {
+      if (descEl.scrollHeight > descEl.clientHeight + 5) {
+        verMasBtn.style.display = "inline";
+      } else {
+        descEl.classList.remove("truncated");
+        verMasBtn.style.display = "none";
+      }
+    }, 10);
     $("game-modal-overlay").classList.add("visible");
     document.body.style.overflow = "hidden";
+  }
+
+  function runSweep(text, direction, callback) {
+    const container = $("sweep-container");
+    const sweepText = $("sweep-text");
+    const sweepArrow = $("sweep-arrow");
+    container.style.display = "block";
+    sweepText.textContent = text;
+    sweepText.className = "sweep-text";
+    void sweepText.offsetWidth;
+
+    if (direction === "right") {
+      // Arrow goes right, text reveals behind it
+      sweepArrow.textContent = "▶";
+      sweepArrow.style.cssText = "position:absolute;top:0;left:0;font-size:13px;color:#3b82f6;font-weight:bold;transition:left 0.35s linear;";
+      void sweepArrow.offsetWidth;
+      sweepArrow.style.left = "100%";
+      sweepText.classList.add("revealed");
+    } else {
+      // Arrow goes left, text hides
+      sweepArrow.textContent = "▲";
+      sweepArrow.style.cssText = "position:absolute;top:0;right:0;font-size:13px;color:#3b82f6;font-weight:bold;transition:right 0.35s linear;";
+      void sweepArrow.offsetWidth;
+      sweepArrow.style.right = "100%";
+      sweepText.classList.add("hiding");
+    }
+
+    setTimeout(() => {
+      container.style.display = "none";
+      sweepText.className = "sweep-text";
+      if (callback) callback();
+    }, 400);
+  }
+
+  function toggleVerMas() {
+    const desc = $("modal-desc");
+    const btn = $("modal-ver-mas-inline");
+    if (desc.classList.contains("truncated")) {
+      // Expand: sweep right revealing "Ver más" then show full text
+      btn.style.display = "none";
+      runSweep("Ver más ▼", "right", () => {
+        desc.classList.remove("truncated");
+        btn.textContent = "Ver menos";
+        btn.style.display = "inline";
+      });
+    } else {
+      // Collapse: sweep left hiding "Ver menos" then truncate
+      btn.style.display = "none";
+      runSweep("Ver menos ▲", "left", () => {
+        desc.classList.add("truncated");
+        btn.textContent = "Ver más";
+        btn.style.display = "inline";
+      });
+    }
   }
 
   function cerrarModal(e) {
@@ -1199,6 +1289,9 @@
   function cerrarModalBtn() {
     $("game-modal-overlay").classList.remove("visible");
     document.body.style.overflow = "";
+    $("modal-desc").classList.remove("truncated");
+    $("modal-ver-mas-inline").style.display = "none";
+    $("sweep-container").style.display = "none";
   }
 
   function descargarDesdeModal() {
