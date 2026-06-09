@@ -268,8 +268,10 @@
 
     <div class="card-body">
     <div id="form-wrapper">
-      <form name="sugerencias" method="POST" netlify onsubmit="enviarFormulario(event)">
-        <input type="hidden" name="form-name" value="sugerencias">
+      <form action="https://api.web3forms.com/submit" method="POST" onsubmit="enviarFormulario(event)">
+        <input type="hidden" name="access_key" value="5d7a5be8-6067-48ec-a8d2-23c7cc52cb6e">
+        <input type="hidden" name="subject" value="Nueva sugerencia - Ort Piratas">
+        <input type="hidden" name="from_name" value="Ort Piratas">
         <input type="hidden" name="usuario" id="campo-usuario" value="">
 
         <div class="form-group">
@@ -325,7 +327,7 @@
 <!-- FOOTER -->
 <div class="footer">
   <div class="footer-version">
-    <span class="version-badge"><span class="version-dot"></span> v1.119</span>
+    <span class="version-badge"><span class="version-dot"></span> v1.120</span>
   </div>
 </div>
 
@@ -445,13 +447,13 @@
     const formData = new FormData(form);
 
     try {
-      const res = await fetch("/", {
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(formData).toString(),
       });
-
-      if (res.ok) {
+      const data = await res.json();
+      if (data.success) {
         $("form-wrapper").style.display = "none";
         $("success-msg").style.display = "block";
       } else {
