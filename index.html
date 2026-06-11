@@ -839,14 +839,26 @@
         </div>
         </div>
       </div>
-      <div class="game-card" onclick="abrirModal(this)" data-name='Minecraft 1.8 (Eaglercraft)' data-desc='Es un puerto no oficial de Minecraft Java Edition 1.8 que corre 100% en el navegador, sin descargar ni instalar el juego original. Tiene soporte para multijugador (servidores), modo un jugador con guardado local, soporte para resource packs y shaders básicos, e incluso voice chat integrado. La idea es la misma experiencia clásica de Minecraft 1.8 — minería, construcción, supervivencia — pero accesible desde cualquier compu con un navegador moderno, ideal para jugar en lugares donde no podés instalar programas (como una compu del cole).' data-img='/images/minecraft.png' data-dl='eaglercraft' data-genres="aventura sandbox">
-        <img class="game-cover" src="/images/minecraft.png" alt="Minecraft 1.8 (Eaglercraft)" loading="lazy" onerror="this.style.display='none'">
+      <div class="game-card" onclick="abrirModal(this)" data-name='Minecraft 1.8 (Eaglercraft)' data-desc='Es un puerto no oficial de Minecraft Java Edition 1.8 que corre 100% en el navegador, sin descargar ni instalar el juego original. Tiene soporte para multijugador (servidores), modo un jugador con guardado local, soporte para resource packs y shaders básicos, e incluso voice chat integrado. La idea es la misma experiencia clásica de Minecraft 1.8 — minería, construcción, supervivencia — pero accesible desde cualquier compu con un navegador moderno, ideal para jugar en lugares donde no podés instalar programas (como una compu del cole).' data-img='/images/eaglercraft.png' data-dl='eaglercraft' data-genres="aventura sandbox">
+        <img class="game-cover" src="/images/eaglercraft.png" alt="Minecraft 1.8 (Eaglercraft)" loading="lazy" onerror="this.style.display='none'">
         <div class="game-card-body">
           <p class="game-name">Minecraft 1.8 (Eaglercraft)</p>
           <p class="game-desc">El Minecraft de toda la vida pero corriendo directo en el navegador, sin instalar nada.</p>
           <div class="game-tags"><span class="game-tag">Aventura</span><span class="game-tag">Sandbox</span></div>
           <div class="card-actions">
           <button class="btn-download" onclick="event.stopPropagation(); descargar(this, 'eaglercraft')">⬇ Descargar</button>
+          <button class="fav-btn-inline" onclick="event.stopPropagation(); toggleFav(this)" title="Favorito">🤍</button>
+        </div>
+        </div>
+      </div>
+      <div class="game-card" onclick="abrirModal(this)" data-name='Minecraft 1.19.1' data-desc='Esta es la versión 1.19.1 de Minecraft Java Edition, parte de la 'Wild Update'. Trae el bioma de pantano de manglares con sus árboles y bloques de barro, ranas y renacuajos que sueltan froglight, y la temible zona Deep Dark con ciudades antiguas custodiadas por el Warden, un mob que detecta vibraciones y es prácticamente imposible de matar al principio del juego. La versión 1.19.1 además agrega mejoras de chat seguro y arregla varios bugs de la 1.19 base. Es Minecraft de toda la vida: minar, construir, sobrevivir y explorar, ahora con más peligro y más cosas para descubrir bajo tierra.' data-img='/images/minecraft.png' data-dl='minecraft' data-genres="aventura sandbox">
+        <img class="game-cover" src="/images/minecraft.png" alt="Minecraft 1.19.1" loading="lazy" onerror="this.style.display='none'">
+        <div class="game-card-body">
+          <p class="game-name">Minecraft 1.19.1</p>
+          <p class="game-desc">El Minecraft original de Java, versión 1.19 (Wild Update), con pantanos de manglares, zona Deep Dark y el Warden.</p>
+          <div class="game-tags"><span class="game-tag">Aventura</span><span class="game-tag">Sandbox</span></div>
+          <div class="card-actions">
+          <button class="btn-download" onclick="event.stopPropagation(); descargar(this, 'minecraft')">⬇ Descargar</button>
           <button class="fav-btn-inline" onclick="event.stopPropagation(); toggleFav(this)" title="Favorito">🤍</button>
         </div>
         </div>
@@ -894,7 +906,7 @@
     <div><strong>Hecho con pasión</strong><p>Para nuestra comunidad pirata.</p></div>
   </div>
   <div class="footer-version">
-    <span class="version-badge"><span class="version-dot"></span> v1.131</span>
+    <span class="version-badge"><span class="version-dot"></span> v1.132</span>
   </div>
 </div>
 
