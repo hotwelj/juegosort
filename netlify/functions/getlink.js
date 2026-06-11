@@ -32,6 +32,8 @@ const LINKS = {
   "slime-rancher":          "https://github.com/hotwelj/juegosort/releases/download/Slime-rancher/Slime.Rancher.v1.4.4.ALL.DLC.zip",
   "cloverpit":              "https://github.com/hotwelj/juegosort/releases/download/Cloverpit/CloverPit.v1.4.10.ALL.DLC.zip",
   "getting-over-it":        "https://github.com/hotwelj/juegosort/releases/download/Getting-over-it/Getting.Over.It.with.Bennett.Foddy.v1.7.zip",
+  "fortune-mill":           "https://github.com/hotwelj/juegosort/releases/download/Fortune-mill/Fortune.Mill.v2026.06.03.zip",
+  "eaglercraft":            "https://github.com/hotwelj/juegosort/releases/download/Eaglercraft/EaglercraftX_1.8_Signed_Offline.zip",
 };
 
 exports.handler = async (event) => {
