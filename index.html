@@ -1046,7 +1046,7 @@
       $("pwd-hint").style.display = "none";
       $("pwd-box").classList.add("correcto");
       const nombre = data.nombre || "";
-      if (nombre) $("session-label").innerHTML = `Sesión iniciada como <strong style="color:#0b3a75;">${nombre}</strong>`;
+      if (nombre) $("session-label").textContent = "Sesión iniciada";
       favs = JSON.parse(localStorage.getItem(getFavsKey()) || "[]");
       initFavBtns(); updateCounts();
       setTimeout(() => {
@@ -1067,7 +1067,7 @@
   if (sessionStorage.getItem("auth_piratas") === "ok") {
     $("pwd-overlay").style.display = "none";
     const nombre = sessionStorage.getItem("auth_nombre") || "";
-    if (nombre) $("session-label").innerHTML = `Sesión iniciada como <strong style="color:#0b3a75;">${nombre}</strong>`;
+    if (nombre) $("session-label").textContent = "Sesión iniciada";
     favs = JSON.parse(localStorage.getItem(getFavsKey()) || "[]");
   }
 
